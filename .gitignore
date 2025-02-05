@@ -1,0 +1,5 @@
+/databases/electrumx/*
+!/databases/electrumx/.gitkeep
+/databases/evrmore/*
+!/databases/evrmore/.gitkeep
+
