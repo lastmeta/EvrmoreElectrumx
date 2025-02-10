@@ -1,5 +1,5 @@
 version: '2'
-name: evrmore_base
+# name: evrmore_base # not current
 services:
   evrmore:
     container_name: evrmore
