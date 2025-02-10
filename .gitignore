@@ -2,4 +2,8 @@
 !/databases/electrumx/.gitkeep
 /databases/evrmore/*
 !/databases/evrmore/.gitkeep
-
+!/databases/evrmore/evrmore.conf
+/workspace/*
+!/databases/.gitkeep
+/workspace/evrmore/*
+/workspace/electrumx-evrmore/*

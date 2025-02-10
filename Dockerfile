@@ -18,7 +18,7 @@ RUN apt-get update && \
 # Create directories
 RUN mkdir -p /app /db /home/electrumx /var/lib/evrmore
 RUN useradd -ms /bin/bash electrumx
-    
+
 WORKDIR /home/electrumx
 COPY ./airdropindexes.csv /home/electrumx/airdropindexes.csv
 
@@ -64,7 +64,7 @@ ENV DOCKER_HOST=unix:///var/run/docker.sock
 EXPOSE 8819 8820 8000 50001 50002
 
 # Start the services
-COPY ./start_services.sh /start_services.sh
-RUN chmod +x /start_services.sh
+COPY start_services.sh /home/electrumx/start_services.sh
+RUN chmod +x /home/electrumx/start_services.sh
 
-ENTRYPOINT ["/start_services.sh"]
+ENTRYPOINT ["/home/electrumx/start_services.sh"]

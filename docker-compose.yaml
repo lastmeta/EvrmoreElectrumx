@@ -2,31 +2,39 @@ version: '2'
 name: evrmore_base
 services:
   evrmore:
+    container_name: evrmore
+    restart: unless-stopped  # Ensures restart if needed but doesn't persist indefinitely
     stop_signal: SIGINT
-    image: evrmore:latest
-    stop_grace_period: 2m
+    image: moontreemetastack/evrmore:latest
+    stop_grace_period: 5m
     volumes:
-      - /home/electrumx/databases/evrmore:/var/lib/evrmore
+      - C:\repos\Satori\EvrmoreElectrumx\databases\evrmore:/var/lib/evrmore
+      #- /home/electrumx/databases/evrmore:/var/lib/evrmore
     ports:
       - "8820:8820"
+    command: ["/usr/local/bin/evrmored", "-datadir=/var/lib/evrmore", "-printtoconsole", "-onlynet=ipv4", "-reindex-chainstate"]
     healthcheck:
       test: ["CMD-SHELL", "headers=`evrmore-cli getblockchaininfo | grep 'headers\":' | awk '{print $$2}' | sed 's/.$$//'`; blocks=`evrmore-cli getblockchaininfo | grep 'blocks\":' | awk '{print $$2}' | sed 's/.$$//'`; echo $$blocks $$headers; if [ \"$$headers\" -gt \"$$blocks\" ]; then exit 1; else exit 0; fi"]
       interval: 5m
       timeout: 30s
       start_period: 24h
   electrumx-evrmore:
+    container_name: electrumx-evrmore
+    restart: unless-stopped  # Ensures restart if needed but doesn't persist indefinitely
     stop_signal: SIGINT
-    image: electrumx-evrmore:latest
-    stop_grace_period: 2m
+    image: moontreemetastack/electrumx-evrmore:latest
+    stop_grace_period: 5m
     volumes:
-      - /home/electrumx/databases/evrmore-electrumx:/db
+      - C:\repos\Satori\EvrmoreElectrumx\databases\electrumx:/db
+      #- /home/electrumx/databases/evrmore-electrumx:/db
     ports:
       - "50001:50001"
       - "50002:50002"
       - "50004:50004"
     environment:
       - SERVICES=ssl://:50002,tcp://:50001,wss://:50004,rpc://127.0.0.1:8000
-      - DAEMON_URL=${DAEMON_URL}
+      - DAEMON_URL=http://user:password@evrmore:8820
+      - DAEMON_TIMEOUT=60
       - BANDWIDTH_UNIT_COST=500
       - CACHE_MB=500
       - REPORT_SERVICES=ssl://128.199.1.149:50002,wss://128.199.1.149:50004
@@ -44,3 +52,6 @@ networks:
       driver: default
       config:
         - subnet: 172.19.0.0/16
+
+# must stop with docker-compose stop evrmore
+# rm ./databases/evrmore/.lock && docker-compose up --force-recreate -d
