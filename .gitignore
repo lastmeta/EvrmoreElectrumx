@@ -7,3 +7,6 @@
 !/databases/.gitkeep
 /workspace/evrmore/*
 /workspace/electrumx-evrmore/*
+/socket/node_modules
+config.bat
+node_modules
