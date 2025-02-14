@@ -12,7 +12,7 @@ ENV AIRDROP_CSV_FILE=/home/electrumx/airdropindexes.csv
 
 # Install necessary packages
 RUN apt-get update && \
-    apt-get install -y git python3 python3-pip python3-venv cmake libleveldb-dev libssl-dev autoconf automake libtool pkg-config && \
+    apt-get install -y git python3 python3-pip python3-venv cmake libleveldb-dev libssl-dev autoconf automake libtool pkg-config curl unzip && \
     apt-get clean
 
 # Create directories
@@ -64,7 +64,12 @@ ENV DOCKER_HOST=unix:///var/run/docker.sock
 EXPOSE 8819 8820 8000 50001 50002
 
 # Start the services
-COPY start_services.sh /home/electrumx/start_services.sh
+COPY ./start_services.sh /home/electrumx/start_services.sh
 RUN chmod +x /home/electrumx/start_services.sh
+
+COPY ./socket /home/electrumx/socket
+RUN cd /home/electrumx/socket && ls
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.2"
+ENV PATH="/root/.bun/bin:${PATH}"
 
 ENTRYPOINT ["/home/electrumx/start_services.sh"]
