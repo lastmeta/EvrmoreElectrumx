@@ -1,7 +1,6 @@
 #!/bin/bash
-
 # Start the evrmored service
-/home/electrumx/evrmore/bin/evrmored -datadir=/var/lib/evrmore -printtoconsole -onlynet=ipv4
+/home/electrumx/evrmore/bin/evrmored -datadir=/var/lib/evrmore -printtoconsole -onlynet=ipv4 &
 
 # Check for SSL certs and create them if they don't exist
 if [ -d "$DB_DIRECTORY/ssl_cert/" ]; then
@@ -13,7 +12,11 @@ else
     openssl req -new -key server.key -out server.csr -subj "/C=AU" && \
     openssl x509 -req -days 1825 -in server.csr -signkey server.key -out server.crt
 fi
-electrumx_server
+# Start ElectrumX
+electrumx_server &
 
-# Wait for the background process to finish
+# Start the socket service
+cd /home/electrumx/socket && bun install && bun run start
+
+# Wait for all background processes
 wait
